@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Promise do
   let(:promise) do
-    Promise.new do |fulfill, reject|
+    Promise.new do |fulfill|
       value = do_something.call
       fulfill.call value
     end

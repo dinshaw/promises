@@ -2,7 +2,6 @@ require "promise/version"
 
 class Promise
 
-
   def fulfilled?
     @state == :fulfilled
   end
@@ -20,9 +19,8 @@ private
   def initialize
     @state = :pending
     begin
-      yield method(:fulfill), method(:reject)
+      yield method(:fulfill)
     rescue Exception => e
-      puts e.message
       reject(e)
     end
   end
