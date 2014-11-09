@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Promise do
+  let(:empty_promise) { Promise.new {} }
   let(:promise) do
     Promise.new do |fulfill|
       value = do_something.call
@@ -9,9 +10,8 @@ describe Promise do
   end
 
   describe 'initialization' do
-    let(:promise) { Promise.new {|_,_| } }
     it 'sets state to :pending' do
-      expect(promise.pending?).to eq true
+      expect(promise.send :pending?).to eq true
     end
 
     it 'sets value to nil' do
@@ -23,7 +23,7 @@ describe Promise do
     let(:do_something) { -> { 'Successful!' } }
 
     it 'fulfills the promise' do
-      expect(promise.fulfilled?).to eq true
+      expect(promise.send :fulfilled?).to eq true
     end
   end
 
@@ -31,7 +31,15 @@ describe Promise do
     let(:do_something) { -> { raise 'Oops!'} }
 
     it 'rejects the promise' do
-      expect(promise.rejected?).to eq true
+      expect(promise.send :rejected?).to eq true
+    end
+  end
+
+  describe '.then' do
+    it 'executes ->on_success' do
+      expect(
+        empty_promise.then(-> { 'Successful!'} )
+      ).to eq 'Successful!'
     end
   end
 end

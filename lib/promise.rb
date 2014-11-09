@@ -2,16 +2,10 @@ require "promise/version"
 
 class Promise
 
-  def fulfilled?
-    @state == :fulfilled
-  end
+public
 
-  def pending?
-    @state == :pending
-  end
-
-  def rejected?
-    @state == :rejected
+  def then(on_success)
+    on_success.call
   end
 
 private
@@ -29,8 +23,20 @@ private
     @state = :fulfilled
   end
 
+  def fulfilled?
+    @state == :fulfilled
+  end
+
+  def pending?
+    @state == :pending
+  end
+
+
   def reject(value)
     @state = :rejected
   end
 
+  def rejected?
+    @state == :rejected
+  end
 end
