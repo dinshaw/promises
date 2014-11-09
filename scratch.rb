@@ -1,6 +1,6 @@
-require 'thread'
+# require 'thread'
 
-class Promise
+class BriansPromise
 
   def self.all(*promises)
     Promise.new do |resolve, reject|
@@ -71,8 +71,13 @@ public
         success: success,
         failure: failure,
         resolve: resolve,
-        reject: reject}
-      if pending? then @pending_steps << step else fulfill(step) end
+        reject: reject
+      }
+      if pending?
+        @pending_steps << step
+      else
+        fulfill(step)
+      end
     end
   end
 

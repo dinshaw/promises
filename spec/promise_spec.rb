@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Promise do
+  let(:on_success) { ->(x) { 'Success!' } }
+  let(:on_error) { ->(x) { 'Fail!' } }
+  let(:value) { promise.instance_variable_get("@value") }
+
   context 'initialization' do
     let(:promise) { Promise.new(false) {} }
     it 'sets state to :pending' do
@@ -8,7 +12,7 @@ describe Promise do
     end
 
     it 'sets value to nil' do
-      expect(promise.instance_variable_get("@value")).to be_nil
+      expect(value).to be_nil
     end
 
     context 'with a long running process' do
@@ -58,23 +62,50 @@ describe Promise do
     end
   end
 
-  describe '.then' do
-    let(:proc) { -> { 'Call me, please...' } }
-
+  describe '#then' do
     context 'when fulfilled' do
-      let(:promise) { Promise.fulfilled('x') }
+      let(:promise) { Promise.fulfilled('x').then(on_success, on_error) }
+
       it 'executes ->on_success' do
-        expect(proc).to receive :call
-        promise.then(proc)
+        expect(value).to eq 'Success!'
+      end
+
+      it 'returns a promise' do
+        expect(promise).to be_a Promise
       end
     end
 
     context 'when rejected' do
-      let(:promise) { Promise.rejected('x') }
+      let(:promise) { Promise.rejected('x').then(on_success, on_error) }
+
       it 'executes ->on_error' do
-        expect(proc).to receive :call
-        promise.then(->{}, proc)
+        expect(value).to eq 'Fail!'
+      end
+
+      it 'returns a promise' do
+        expect(promise).to be_a Promise
       end
     end
   end
+
+  xdescribe '#resolve' do
+    let(:promise) { Promise.fulfilled(99) }
+
+    context 'when pending?' do
+      it 'does nothing' do
+        expect(promise)
+        promise.send :resolve, step
+      end
+    end
+
+    context 'when fulfilled?' do
+      it 'calls :on_success'
+    end
+
+    context 'when rejected?' do
+      it 'calls :on_error'
+    end
+  end
 end
+
+

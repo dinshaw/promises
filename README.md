@@ -1,6 +1,13 @@
 # Promise
 
-TODO: Write a gem description
+resolve:
+1. settle or find a solution to (a problem, dispute, or contentious matter).
+2. decide firmly on a course of action.
+
+fulfill:
+1. bring to completion or reality; achieve or realize (something desired, promised, or predicted).
+
+For our context, 'resolve' chooses between 'fulfillment' (success) and 'rejection' (failure)
 
 ## Installation
 
