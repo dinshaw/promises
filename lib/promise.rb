@@ -2,6 +2,10 @@ require "promise/version"
 
 class Promise
 
+  def self.fulfilled(value)
+    Promise.new { |fulfill, _| fulfill.call(value) }
+  end
+
 public
 
   def then(on_success)
@@ -21,6 +25,7 @@ private
 
   def fulfill(value)
     @state = :fulfilled
+    @value = value
   end
 
   def fulfilled?
@@ -34,6 +39,7 @@ private
 
   def reject(value)
     @state = :rejected
+    @value = value
   end
 
   def rejected?
