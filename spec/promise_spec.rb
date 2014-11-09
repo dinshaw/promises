@@ -1,14 +1,28 @@
 require 'spec_helper'
 
 describe Promise do
-  describe 'initialization' do
-    let(:promise) { Promise.new {} }
+  context 'initialization' do
+    let(:promise) { Promise.new(false) {} }
     it 'sets state to :pending' do
       expect(promise.send :pending?).to eq true
     end
 
     it 'sets value to nil' do
       expect(promise.instance_variable_get("@value")).to be_nil
+    end
+
+    context 'with a long running process' do
+      let(:promise) do
+        Promise.new do |fulfill, reject|
+          sleep 2
+          fulfill('All rested!')
+        end
+      end
+
+      it 'backgrounds the process' do
+        expect(Thread).to receive :new
+        promise
+      end
     end
   end
 
@@ -30,7 +44,7 @@ describe Promise do
 
   context 'on exception during fulfillment' do
     let(:promise) do
-      Promise.new do |fulfill|
+      Promise.new(false) do |fulfill|
         fulfill.call ->{ raise RuntimeError.new }.call
       end
     end

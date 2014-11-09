@@ -3,11 +3,11 @@ require "promise/version"
 class Promise
 
   def self.fulfilled(value)
-    Promise.new { |fulfill, _| fulfill.call(value) }
+    Promise.new(false) { |fulfill, _| fulfill.call(value) }
   end
 
   def self.rejected(value)
-    Promise.new { |_, reject| reject.call(value) }
+    Promise.new(false) { |_, reject| reject.call(value) }
   end
 
 public
@@ -23,13 +23,16 @@ public
 
 private
 
-  def initialize
+  def initialize(async = true)
     @state = :pending
-    begin
-      yield method(:fulfill)
-    rescue Exception => e
-      reject(e)
+    exec = -> do
+      begin
+        yield method(:fulfill)
+      rescue Exception => e
+        reject(e)
+      end
     end
+    async ? Thread.new(&exec) : exec.call
   end
 
   def fulfill(value)
