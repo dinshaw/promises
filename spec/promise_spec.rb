@@ -12,45 +12,34 @@ describe Promise do
     end
   end
 
-  describe '.fulfilled' do
+  context 'on successful fulfillment' do
     let(:promise) { Promise.fulfilled(99) }
+
     it 'returns a Promise' do
       expect(promise).to be_a Promise
     end
 
-    it 'fulfills the promise' do
-      expect(promise.send :fulfilled?).to eq true
-    end
-  end
-
-  context 'on successful execution' do
-    let(:promise) do
-      Promise.new do |fulfill|
-        fulfill.call ->{ 'Successful!' }.call
-      end
-    end
-
-    it 'fulfills the promise' do
+    it 'sets state to :fulfilled' do
       expect(promise.send :fulfilled?).to eq true
     end
 
-    it 'sets the value' do
-      expect(promise.instance_variable_get "@value").to eq 'Successful!'
+    it 'sets @value' do
+      expect(promise.instance_variable_get "@value").to eq 99
     end
   end
 
-  context 'on exception during execution' do
+  context 'on exception during fulfillment' do
     let(:promise) do
       Promise.new do |fulfill|
         fulfill.call ->{ raise RuntimeError.new }.call
       end
     end
 
-    it 'rejects the promise' do
+    it 'sets state to :rejected' do
       expect(promise.send :rejected?).to eq true
     end
 
-    it 'sets the value' do
+    it 'sets @value' do
       expect(promise.instance_variable_get "@value").to be_a RuntimeError
     end
   end
