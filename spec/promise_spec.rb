@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Promise do
-  let(:on_success) { ->(x) { 'Success!' } }
-  let(:on_error) { ->(x) { 'Fail!' } }
+  let(:on_success) { ->(value) { [value,'succeeded'].join(' ') } }
+  let(:on_error) { ->(value) { [value, 'failed'].join(' ') } }
   let(:value) { promise.instance_variable_get("@value") }
 
   context 'initialization' do
@@ -64,10 +64,10 @@ describe Promise do
 
   describe '#then' do
     context 'when fulfilled' do
-      let(:promise) { Promise.fulfilled('x').then(on_success, on_error) }
+      let(:promise) { Promise.fulfilled('fulfilled').then(on_success, on_error) }
 
       it 'executes ->on_success' do
-        expect(value).to eq 'Success!'
+        expect(value).to eq 'fulfilled succeeded'
       end
 
       it 'returns a promise' do
@@ -76,36 +76,34 @@ describe Promise do
     end
 
     context 'when rejected' do
-      let(:promise) { Promise.rejected('x').then(on_success, on_error) }
+      let(:promise) { Promise.rejected('rejected').then(on_success, on_error) }
 
       it 'executes ->on_error' do
-        expect(value).to eq 'Fail!'
+        expect(value).to eq 'rejected failed'
       end
 
       it 'returns a promise' do
         expect(promise).to be_a Promise
       end
     end
-  end
 
-  xdescribe '#resolve' do
-    let(:promise) { Promise.fulfilled(99) }
-
-    context 'when pending?' do
-      it 'does nothing' do
-        expect(promise)
-        promise.send :resolve, step
+    context 'with a nested Promise' do
+      let(:promise) { Promise.fulfilled('fulfilled').then(on_success, on_error) }
+      let(:on_success) do
+        ->(value) {
+          Promise.new { |fulfill, reject|
+            fulfill.call [value, 'nesting succeeded'].join(' ')
+          }.then(->(value) { [value, 'and so did I!'].join(' ')})
+        }
+      end
+      it 'adds the next step to the new Promise' do
+        expect(value).to eq 'fulfilled nesting succeeded and so did I!'
       end
     end
-
-    context 'when fulfilled?' do
-      it 'calls :on_success'
-    end
-
-    context 'when rejected?' do
-      it 'calls :on_error'
-    end
   end
+
+
+
 end
 
 

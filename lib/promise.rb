@@ -74,30 +74,33 @@ private
   end
 
   def resolve(step)
-    callback = step[fulfilled? ? :on_success : :on_error]
+    callback = fulfilled? ? step[:on_success] : step[:on_error]
+    result = callback.call(@value)
+    # result =
+    #   begin
+    #     # The callback may return a regular value, a promise,
+    #     # or raise an exception.
+    #     callback.call(@value)
+    #   rescue Exception => e
+    #     # This exception might come back from a callback (success or failure).
+    #     # We assume raised exceptions are errors and so we wrap it in a rejected
+    #     # promise to force the next promise to be in a rejected case.
+    #     Promise.rejected(e)
+    #   end
 
-    result =
-      begin
-        # The callback may return a regular value, a promise,
-        # or raise an exception.
-        callback.call(@value)
-      rescue Exception => e
-        # This exception might come back from a callback (success or failure).
-        # We assume raised exceptions are errors and so we wrap it in a rejected
-        # promise to force the next promise to be in a rejected case.
-        Promise.rejected(e)
-      end
-
-    Promise === result ?
+    if Promise === result
+      puts 'Promise'
       # We have a promise so we need to link that promise with one we already
       # constructed inside then. This can be done by using then (although it's
       # not super efficient since we create a 3rd promise (!!!) that acts as the
       # go between for result and the step's promise from then).
-      result.then(step[:fulfill], step[:reject]) :
+      result.then(step[:fulfill], step[:reject])
+    else
       # We have a value (not a promise!) so we simply reuse the promise we
       # constructe in then when the "call" was original setup. Our step has
       # the resolve and reject methods from that promise.
-      step[fulfilled? ? :fulfill : :reject].call(result)
+      (fulfilled? ? step[:fulfill] : step[:reject]).call(result)
+    end
   end
 
   def resolve_steps
