@@ -6,10 +6,19 @@ class Promise
     Promise.new { |fulfill, _| fulfill.call(value) }
   end
 
+  def self.rejected(value)
+    Promise.new { |_, reject| reject.call(value) }
+  end
+
 public
 
-  def then(on_success)
-    on_success.call
+  def then(on_success, on_error = nil)
+    case @state
+    when :fulfilled
+      on_success.call
+    when :rejected
+      on_error.call
+    end
   end
 
 private
