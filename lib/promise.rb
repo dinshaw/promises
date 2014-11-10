@@ -48,7 +48,7 @@ private
   end
 
   def fulfill(value)
-    p "fulfilling with #{value}"
+    # p "fulfilling with #{value}"
     @state = :fulfilled
     @value = value
     resolve_steps
@@ -63,7 +63,7 @@ private
   end
 
   def reject(value)
-    p "rejecting with #{value}"
+    # p "rejecting with #{value}"
     @state = :rejected
     @value = value
     resolve_steps
@@ -76,19 +76,6 @@ private
   def resolve(step)
     callback = fulfilled? ? step[:on_success] : step[:on_error]
     result = callback.call(@value)
-    # result =
-    #   begin
-    #     puts 'calling'
-    #     # The callback may return a regular value, a promise,
-    #     # or raise an exception.
-    #     callback.call(@value)
-    #   rescue Exception => e
-    #     puts 'rejected'
-    #     # This exception might come back from a callback (success or failure).
-    #     # We assume raised exceptions are errors and so we wrap it in a rejected
-    #     # promise to force the next promise to be in a rejected case.
-    #     Promise.rejected(e)
-    #   end
 
     if Promise === result
       # We have a promise so we need to link that promise with one we already

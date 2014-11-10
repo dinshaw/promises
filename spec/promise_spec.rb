@@ -6,7 +6,7 @@ describe Promise do
   let(:value) { promise.instance_variable_get("@value") }
 
   context 'initialization' do
-    let(:promise) { Promise.new {} }
+    let(:promise) { Promise.new(false) {} }
 
     it 'sets state to :pending' do
       expect(promise.send :pending?).to eq true
@@ -65,13 +65,24 @@ describe Promise do
     let(:promise) { Promise.fulfilled('fulfilled').then(on_success, on_error) }
 
     context 'when fulfilled' do
-
       it 'executes ->on_success' do
         expect(value).to eq 'fulfilled succeeded'
       end
 
       it 'returns a promise' do
         expect(promise).to be_a Promise
+      end
+
+      context 'and next step raises' do
+        let(:on_success) { ->(x) { raise 'Oops!' } }
+
+        it 'sets @value to the exception' do
+          expect(value).to be_a RuntimeError
+        end
+
+        it 'sets state to :rejected' do
+          expect(promise.send :rejected?).to eq true
+        end
       end
     end
 
@@ -93,7 +104,7 @@ describe Promise do
       context 'that succeeds' do
         let(:on_success) do
           ->(value) {
-            Promise.new { |fulfill, reject|
+            Promise.new(false) { |fulfill, reject|
               fulfill.call [value, 'nesting succeeded'].join(' ')
             }.then(->(value) { [value, 'and so did I!'].join(' ')})
           }
@@ -108,12 +119,14 @@ describe Promise do
         let(:on_error) { ->(value) { [value, 'but I did not...'].join(' ')} }
         let(:on_success) do
           ->(val) {
-            Promise.new { raise 'Oops!' }.then(nil, on_error )
+            Promise.new(false) {
+              raise 'Oops!'
+            }.then(nil, on_error )
           }
         end
 
         it 'adds the next step to the new Promise' do
-          expect(value).to eq 'fulfilled nesting succeeded and so did I!'
+          expect(value).to eq 'Oops! but I did not...'
         end
       end
     end
