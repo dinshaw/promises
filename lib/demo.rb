@@ -1,8 +1,10 @@
-require './brians_promise'
+# require './brians_promise'
 require './lib/promise'
 
 on_success = ->(x) { x + 'succeed...' }
-on_error = ->(x) { x.message + 'error...' }
+on_error = ->(x) {
+  s = x.is_a?(String) ? x : x.message
+  s + ': ' + 'error...' }
 exception = ->(x) { raise 'Oops!' }
 
 # Basic .then()
@@ -18,9 +20,9 @@ Promise.rejected('Start...').then(on_success, on_error).then(on_error, on_succes
 # Promise.fulfilled('Start...').then(nested_success, on_error).then(on_error)
 
 # Nested with exception
-on_success = ->(value) do
+nested_exception = ->(value) do
   Promise.new(false) { |fulfill, reject|
-    raise 'Oops!'
-  }
+    exception.call(value)
+  }.then(on_success, on_error)
 end
-Promise.fulfilled('Start...').then(on_success, nil).then(nil, on_error)
+Promise.fulfilled('Start...').then(nested_exception).then(nil, on_error)

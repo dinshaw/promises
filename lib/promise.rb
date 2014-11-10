@@ -1,4 +1,5 @@
 # require "promise/version"
+require 'debugger'
 class Promise
 
   def self.fulfilled(value)
@@ -33,6 +34,7 @@ public
 private
 
   def initialize(async = true)
+    # debugger
     p "Creating promise..."
     @state = :pending
     @value = nil
@@ -44,7 +46,8 @@ private
         reject(e)
       end
     end
-    async ? Thread.new(&exec) : exec.call
+    exec.call
+    # async ? Thread.new(&exec) : exec.call
   end
 
   def fulfill(value)
