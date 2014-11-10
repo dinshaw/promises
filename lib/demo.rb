@@ -1,9 +1,15 @@
 require './lib/promise'
-pr = Promise.fulfilled('x').then(->(x) { x + 'Success!' }, ->(x) { X + 'Fail!'})
+on_success = ->(x) { x + 'succeed...' }
+on_error = ->(x) { x + 'error...' }
+exception = ->(x) { raise 'Oops!' }
 
-nested_promise = ->(value) do
-  Promise.new {|fulfill, reject|
-    fulfill.call(value + 'Hello')
-  }
+# Basic .then
+Promise.fulfilled('Start...').then(on_success, on_error).then(on_error, on_success)
+Promise.rejected('Start...').then(on_success, on_error).then(on_error, on_success)
+
+nested_success = ->(value) do
+  Promise.new do |fulfill, reject|
+    fulfill.call on_success.call(value)
+  end.then(on_success).then(exception)
 end
-pr = Promise.fulfilled('x').then(nested_promise, ->(x) { X + 'Fail!'})
+Promise.fulfilled('Start...').then(nested_success, on_error).then(on_error)
