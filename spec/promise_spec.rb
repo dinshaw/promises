@@ -145,6 +145,7 @@ describe Promise do
     let(:promise) do
       Promise.all(*promises).then(->(val) { "#{val.size} promises resolved!"})
     end
+    before { value; sleep 40 }
 
     it 'waits for all promises to resolve' do
       expect(value).to eq "4 promises resolved!"

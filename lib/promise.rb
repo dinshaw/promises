@@ -57,8 +57,7 @@ private
         reject(e)
       end
     end
-    exec.call
-    # async ? Thread.new(&exec) : exec.call
+    async ? Thread.new(&exec) : exec.call
   end
 
   def fulfill(value)
