@@ -2,6 +2,19 @@
 require 'debugger'
 class Promise
 
+  def self.all(*promises)
+    Promise.new do |fulfill, reject|
+      results = []
+      success = ->(result) do
+        results << result
+        fulfill.call(results) if results.size == promises.size
+      end
+      promises.each do |promise|
+        promise.then(success, reject)
+      end
+    end
+  end
+
   def self.fulfilled(value)
     Promise.new(false) { |fulfill, _| fulfill.call(value) }
   end
@@ -34,8 +47,6 @@ public
 private
 
   def initialize(async = true)
-    # debugger
-    p "Creating promise..."
     @state = :pending
     @value = nil
     @pending_steps = []
@@ -52,7 +63,6 @@ private
 
   def fulfill(value)
     return unless @state == :pending
-    p "fulfilling with #{value}"
     @state = :fulfilled
     @value = value
     resolve_steps
@@ -68,7 +78,6 @@ private
 
   def reject(value)
     return unless @state == :pending
-    p "rejecting with #{value}"
     @state = :rejected
     @value = value
     resolve_steps
@@ -79,7 +88,6 @@ private
   end
 
   def resolve(step)
-    puts "Resolving with #{step}"
     callback = fulfilled? ? step[:on_success] : step[:on_error]
     result = callback.call(@value)
 
@@ -98,7 +106,6 @@ private
   end
 
   def resolve_steps
-    puts "PendingSteps: #{@pending_steps.inspect}"
     @pending_steps.each { |step| resolve(step) }
     @pending_steps = nil
   end

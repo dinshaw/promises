@@ -131,4 +131,23 @@ describe Promise do
       end
     end
   end
+
+  describe '.all' do
+    let(:promises) do
+      [1, 2, 3, 4].map {|n|
+        Promise.new do |resolve, reject|
+          sleep rand(10)
+          resolve.call(n)
+        end
+      }
+    end
+
+    let(:promise) do
+      Promise.all(*promises).then(->(val) { "#{val.size} promises resolved!"})
+    end
+
+    it 'waits for all promises to resolve' do
+      expect(value).to eq "4 promises resolved!"
+    end
+  end
 end
