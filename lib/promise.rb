@@ -1,5 +1,4 @@
 # require "promise/version"
-
 class Promise
 
   def self.fulfilled(value)
@@ -34,6 +33,7 @@ public
 private
 
   def initialize(async = true)
+    p "Creating promise..."
     @state = :pending
     @value = nil
     @pending_steps = []
@@ -48,7 +48,8 @@ private
   end
 
   def fulfill(value)
-    # p "fulfilling with #{value}"
+    return unless @state == :pending
+    p "fulfilling with #{value}"
     @state = :fulfilled
     @value = value
     resolve_steps
@@ -63,7 +64,8 @@ private
   end
 
   def reject(value)
-    # p "rejecting with #{value}"
+    return unless @state == :pending
+    p "rejecting with #{value}"
     @state = :rejected
     @value = value
     resolve_steps
@@ -74,6 +76,7 @@ private
   end
 
   def resolve(step)
+    puts "Resolving with #{step}"
     callback = fulfilled? ? step[:on_success] : step[:on_error]
     result = callback.call(@value)
 
@@ -92,6 +95,7 @@ private
   end
 
   def resolve_steps
+    puts "PendingSteps: #{@pending_steps.inspect}"
     @pending_steps.each { |step| resolve(step) }
     @pending_steps = nil
   end
