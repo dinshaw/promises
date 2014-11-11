@@ -1,5 +1,4 @@
-# require "promise/version"
-require 'debugger'
+require "promise/version"
 class Promise
 
   def self.all(*promises)
