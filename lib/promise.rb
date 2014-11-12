@@ -14,6 +14,22 @@ class Promise
     end
   end
 
+  def self.any(*promises)
+    Promise.new do |fulfill, reject|
+      count = promises.size
+      on_error = ->(*) do
+        count -= 1
+        reject.call if count == 0
+      end
+      # For each promise, let it fulfill this promise,
+      # if it fulfills. Otherwise, if all *promises come in rejected,
+      # reject this promise.
+      promises.each do |promise|
+        promise.then(fulfill, on_error)
+      end
+    end
+  end
+
   def self.fulfilled(value)
     Promise.new(false) { |fulfill, _| fulfill.call(value) }
   end
@@ -23,6 +39,14 @@ class Promise
   end
 
 public
+
+  def pending?
+    @state == :pending
+  end
+
+  def value
+    @value
+  end
 
   def then(on_success, on_error = nil)
     on_success ||= ->(x) {x}
@@ -68,10 +92,6 @@ private
 
   def fulfilled?
     @state == :fulfilled
-  end
-
-  def pending?
-    @state == :pending
   end
 
   def reject(value)

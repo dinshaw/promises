@@ -132,11 +132,12 @@ describe Promise do
     end
   end
 
+
   describe '.all' do
     let(:promises) do
-      [1, 2, 3, 4].map {|n|
+      [1, 2, 3].map {|n|
         Promise.new do |resolve, reject|
-          sleep rand(10)
+          sleep rand(3)
           resolve.call(n)
         end
       }
@@ -145,10 +146,30 @@ describe Promise do
     let(:promise) do
       Promise.all(*promises).then(->(val) { "#{val.size} promises resolved!"})
     end
-    before { value; sleep 40 }
+
+    before { promise; sleep 9 }
 
     it 'waits for all promises to resolve' do
-      expect(value).to eq "4 promises resolved!"
+      expect(value).to eq "#{promises.size} promises resolved!"
+    end
+  end
+
+  xdescribe '.any' do
+    let(:promises) do
+      [1, 2].map do |n|
+        Promise.new do |resolve, reject|
+          sleep rand(3)
+          resolve.call(n)
+        end
+      end
+    end
+    let(:timeout) { Promise.new { sleep 2; raise 'Took too long!'} }
+    let(:promise) { Promise.any(*promises << timeout) }
+    before { promise; sleep 6 }
+
+    it 'waits for one promise to fulfill' do
+      expect(value).to be_a String
     end
   end
 end
+
