@@ -1,9 +1,14 @@
 require 'promise'
+# Basic
 Promise.new{ p 'Hello' }
 Promise.new{ sleep 2; p 'Hello' }
+Promise.new { raise 'I raised an EXCEPTION!' }
+Promise.new { sleep 2; raise 'I raised an EXCEPTION!' }
+
+# fulfill & reject
 Promise.new { |fulfill| sleep 2; fulfill.call('I slept 2 and fulfilled!') }
 Promise.new { |_, reject| sleep 2; reject.call('I slept 2 and rejected...') }
-Promise.new { raise 'I raised an EXCEPTION!' }
+
 Promise.new { raise 'I raised an EXCEPTION!' }.then(_, ->(error){ p error.message } )
 
 on_success = ->(x) { x + 'succeed...' }
