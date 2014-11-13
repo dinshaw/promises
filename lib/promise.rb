@@ -1,4 +1,6 @@
 require "promise/version"
+require "demo_helpers"
+
 class Promise
 
   def self.all(*promises)

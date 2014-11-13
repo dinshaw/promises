@@ -1,13 +1,18 @@
 require 'promise'
-# Basic
-Promise.new{ p 'Hello' }
-Promise.new{ sleep 2; p 'Hello' }
-Promise.new { raise 'I raised an EXCEPTION!' }
-Promise.new { sleep 2; raise 'I raised an EXCEPTION!' }
+
+# Promises we can keep
+# I promise there will be no cat pics in this presentation
+
+# Return a promise
+Promise.new{ 'No cat pic here.' }
+Promise.new{ p 'No cat pic here.' }
+Promise.new{ get_cat_pic(2); p 'Still, no cat pic.' }
+Promise.new {  raise 'Tried to show cat yawning...' }
+Promise.new { get_cat_pic(2); raise 'Not gonna happen.' }
 
 # fulfill & reject
-Promise.new { |fulfill| sleep 2; fulfill.call('I slept 2 and fulfilled!') }
-Promise.new { |_, reject| sleep 2; reject.call('I slept 2 and rejected...') }
+Promise.new { |fulfill| sleep 2; fulfill.call('No cat pic here.') }
+Promise.new { |_, reject| sleep 2; reject.call('Tried to show cat looking disdainful.') }
 
 Promise.new { raise 'I raised an EXCEPTION!' }.then(_, ->(error){ p error.message } )
 
