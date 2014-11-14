@@ -57,9 +57,11 @@ promises = %w(CAT PUG BABY).map do |meme|
 end; nil
 Promise.all(*promises).then(->(x) { print "Everyone is up: \n#{x.join}"}); nil
 
-# Then do it separate
+# separate...
 
-# race/any
+# Implementation of .all
+
+# Any / race
 def race
   promises = %w(Cat Pug Baby).map { |meme|
     Promise.new do |fulfill, reject|
@@ -71,3 +73,4 @@ def race
   nil
 end
 
+# Implementation of any
