@@ -59,19 +59,15 @@ Promise.all(*promises).then(->(x) { print "Everyone is up: \n#{x.join}"}); nil
 
 # Then do it separate
 
-# race
-
-# Any
+# race/any
 def race
-  memes = %w(Cat Pug Baby)
-
-  promises = memes.map { |meme|
+  promises = %w(Cat Pug Baby).map { |meme|
     Promise.new do |fulfill, reject|
-      x = rand(5)
-      sleep x; fulfill.call("#{meme} slept #{x}, ")
+      x = rand(8)
+      sleep x; fulfill.call("#{meme} slept #{x}")
     end
-  } << Promise.new { sleep 3; raise 'Took too long!' }
-  Promise.any(*promises).then(->(val) { puts val })
+  }
+  Promise.any(*promises).then(->(x){p x})
   nil
 end
 
