@@ -1,39 +1,63 @@
 require 'promise'
 
-# Promises we can keep
-# I promise there will be no cat pics in this presentation
+Promise.start('Garfield')
+Promise.start('Garfield').then(->(x){p x})
+Promise.start('Garfield').then(->(x){ x+' the cat'}).then(->(x){ x+' is lazy'})
 
-# Return a promise
-Promise.new{ 'No cat pic here.' }
-Promise.new{ p 'No cat pic here.' }
-Promise.new{ get_cat_pic(2); p 'Still, no cat pic.' }
-Promise.new {  raise 'Tried to show cat yawning...' }
-Promise.new { get_cat_pic(2); raise 'Not gonna happen.' }
+# Exceptions
+Promise.start('Garfield').
+  then(->(x){ raise 'No cat pics!'}).
+  then(_, ->(x){'Alert! '+x.message})
 
-# fulfill & reject
-Promise.new { |fulfill| sleep 2; fulfill.call('No cat pic here.') }
-Promise.new { |_, reject| sleep 2; reject.call('Tried to show cat looking disdainful.') }
+# Async ... but first ...
+# Constructor - what has .start been doing?
+Promise.start('Garfield')
+Promise.new(false) { |fulfill, reject|
+  fulfill.call('Garfield')
+}
 
-Promise.new { raise 'I raised an EXCEPTION!' }.then(_, ->(error){ p error.message } )
+# Fulfill / Reject slide...
 
-on_success = ->(x) { x + 'succeed...' }
-on_error = ->(x) { x + 'error...' }
-Promise.fulfilled('Start...').then(on_success, on_error).then(on_error, on_success)
-Promise.rejected('Start...').then(on_success, on_error).then(on_error, on_success)
+# Async
+Promise.new { |fulfill, reject|
+  fulfill.call('Garfield')
+}
 
-# All
-memes = %w(Cat Pug Baby)
-promises = memes.map do |meme|
+# Things of note: Returns immediately
+pr = Promise.new { |fulfill, reject|
+  sleep 5
+  fulfill.call('Garfield')
+}
+watch pr
+
+# Async - Sync
+Promise.new { |fulfill, reject|
+  sleep 5
+  fulfill.call('Garfield')
+}.then(->(x){p x + ' the cat.'})
+
+# Lets get a little more involved
+
+promises = %w(CAT PUG BABY).map do |meme|
   Promise.new { |fulfill, _|
     x = rand(10)
-    sleep x; fulfill.call("#{meme} slept #{x}, ")
-  }.then(->(y) { msg = y + 'then woke up.' })
-end
-while true do
-  values = promises.map(&:value)
-  print "#{values}\r"
-  break if values.compact.size == promises.size
-end
+    sleep x
+    fulfill.call("#{meme} slept #{x}")
+  }.then(->(y) { y + ', then woke up.' })
+end; nil
+watch_many promises
+
+# all
+promises = %w(CAT PUG BABY).map do |meme|
+  Promise.new { |fulfill, _|
+    x = rand(10)
+    sleep x
+    fulfill.call( p "#{meme} slept #{x}")
+  }.then(->(y) { y + ", then woke up.\n" })
+end; nil
+Promise.all(*promises).then(->(x) { print "Everyone is up: \n#{x.join}"}); nil
+
+# race
 
 all_promise = Promise.all(*promises).then(->(x) { p "Everyone is up: #{x}"})
 while true do; print "#{all_promise.value}\r"; end

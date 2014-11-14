@@ -32,12 +32,8 @@ class Promise
     end
   end
 
-  def self.fulfilled(value)
+  def self.start(value)
     Promise.new(false) { |fulfill, _| fulfill.call(value) }
-  end
-
-  def self.rejected(value)
-    Promise.new(false) { |_, reject| reject.call(value) }
   end
 
 public
@@ -112,16 +108,14 @@ private
     result = callback.call(@value)
 
     if Promise === result
-      # We have a promise so we need to link that promise with one we already
-      # constructed inside then. This can be done by using then (although it's
-      # not super efficient since we create a 3rd promise (!!!) that acts as the
-      # go between for result and the step's promise from then).
+      # We have a promise that is still executing, so we need to tell it
+      # what to do when complete
       result.then(step[:fulfill], step[:reject])
     else
       # We have a value (not a promise!) so we simply reuse the promise we
-      # constructe in then when the "call" was original setup. Our step has
+      # constructed in then when the "call" was originally setup. Our step has
       # the resolve and reject methods from that promise.
-      (fulfilled? ? step[:fulfill] : step[:reject]).call(result)
+      (fulfilled? ? step[:fulfill] : step[:reject]).call result
     end
   end
 
