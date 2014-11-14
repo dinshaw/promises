@@ -3,15 +3,17 @@ require 'promise'
 Promise.start('Garfield')
 Promise.start('Garfield').then(->(x){p x})
 Promise.start('Garfield').then(->(x){ x+' the cat'}).then(->(x){ x+' is lazy'})
+_.then(->(x){x+' and fat!'})
 
 # Exceptions
 Promise.start('Garfield').
-  then(->(x){ raise 'No cat pics!'}).
+  then(->(x){ raise 'Garfield sucks.'}).
   then(_, ->(x){'Alert! '+x.message})
 
 # Async ... but first ...
 # Constructor - what has .start been doing?
 Promise.start('Garfield')
+
 Promise.new(false) { |fulfill, reject|
   fulfill.call('Garfield')
 }
@@ -48,14 +50,14 @@ end; nil
 watch_many promises
 
 # all
-promises = %w(CAT PUG BABY).map do |meme|
+promises = %w(Garfield Felix Grumpy).map do |meme|
   Promise.new { |fulfill, _|
     x = rand(10)
     sleep x
     fulfill.call( p "#{meme} slept #{x}")
   }.then(->(y) { y + ", then woke up.\n" })
 end; nil
-Promise.all(*promises).then(->(x) { print "Everyone is up: \n#{x.join}"}); nil
+Promise.all(*promises).then(->(x) { puts "Everyone is up: \n#{x.join}"}); nil
 
 # separate...
 

@@ -107,7 +107,7 @@ private
     callback = fulfilled? ? step[:on_success] : step[:on_error]
     result = callback.call(@value)
 
-    if Promise === result
+    if result.is_a? Promise
       # We have a promise that is still executing, so we need to tell it
       # what to do when complete
       result.then(step[:fulfill], step[:reject])
