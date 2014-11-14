@@ -30,7 +30,7 @@ describe Promise do
   end
 
   context 'on successful fulfillment' do
-    let(:promise) { Promise.fulfilled(99) }
+    let(:promise) { Promise.start(99) }
 
     it 'returns a Promise' do
       expect(promise).to be_a Promise
@@ -62,7 +62,7 @@ describe Promise do
   end
 
   describe '#then' do
-    let(:promise) { Promise.fulfilled('fulfilled').then(on_success, on_error) }
+    let(:promise) { Promise.start('fulfilled').then(on_success, on_error) }
 
     context 'when fulfilled' do
       it 'executes ->on_success' do
@@ -87,7 +87,11 @@ describe Promise do
     end
 
     context 'when rejected' do
-      let(:promise) { Promise.rejected('rejected').then(on_success, on_error) }
+      let(:promise) do
+        Promise.new(false) { |_,reject|
+          reject.call('rejected')
+        }.then(on_success, on_error)
+      end
 
       it 'executes ->on_error' do
         expect(value).to eq 'rejected failed'
@@ -99,7 +103,7 @@ describe Promise do
     end
 
     context 'with a nested Promise' do
-      let(:promise) { Promise.fulfilled('fulfilled').then(on_success, on_error) }
+      let(:promise) { Promise.start('fulfilled').then(on_success, on_error) }
 
       context 'that succeeds' do
         let(:on_success) do
