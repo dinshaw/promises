@@ -1,6 +1,6 @@
 # Promise
 This is not production code (at the moment). It is a conceptual demo.
-Slides for the accompanying presentation are here :  http://dinshaw.github.io/promises-sildes/#/6
+Slides for the accompanying presentation are [here](http://dinshaw.github.io/promises-sildes).
 
 * For this implementation, 'resolve' chooses between 'fulfillment' (success) and 'rejection' (failure)
 
