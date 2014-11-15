@@ -9,6 +9,9 @@ Clone this repo.
 Run `rake install`
 Then in irb, you should be able to `require 'promise'`
 
+## Usage
+See `/demo`
+
 ## Similar projects:
 - [promise.rb](https://github.com/lgierth/promise.rb/blob/master/README.md), Promises/A(+) implementation
 
