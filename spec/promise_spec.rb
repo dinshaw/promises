@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Promise do
   let(:on_success) { ->(value) { [value, 'succeeded'].join(' ') } }
   let(:on_error) { ->(value) { [value, 'failed'].join(' ') } }
-  let(:value) { promise.instance_variable_get("@value") }
+  before { promise; sleep 1 }
 
   context 'initialization' do
     let(:promise) { Promise.new(false) {} }
@@ -13,7 +13,7 @@ describe Promise do
     end
 
     it 'sets value to nil' do
-      expect(value).to be_nil
+      expect(promise.value).to be_nil
     end
 
     context 'async execution' do
@@ -41,7 +41,7 @@ describe Promise do
     end
 
     it 'sets @value' do
-      expect(value).to eq 99
+      expect(promise.value).to eq 99
     end
   end
 
@@ -57,7 +57,7 @@ describe Promise do
     end
 
     it 'sets @value' do
-      expect(value).to be_a RuntimeError
+      expect(promise.value).to be_a RuntimeError
     end
   end
 
@@ -66,7 +66,7 @@ describe Promise do
 
     context 'when fulfilled' do
       it 'executes ->on_success' do
-        expect(value).to eq 'fulfilled succeeded'
+        expect(promise.value).to eq 'fulfilled succeeded'
       end
 
       it 'returns a promise' do
@@ -77,7 +77,7 @@ describe Promise do
         let(:on_success) { ->(x) { raise 'Oops!' } }
 
         it 'sets @value to the exception' do
-          expect(value).to be_a RuntimeError
+          expect(promise.value).to be_a RuntimeError
         end
 
         it 'sets state to :rejected' do
@@ -94,7 +94,7 @@ describe Promise do
       end
 
       it 'executes ->on_error' do
-        expect(value).to eq 'rejected failed'
+        expect(promise.value).to eq 'rejected failed'
       end
 
       it 'returns a promise' do
@@ -115,7 +115,7 @@ describe Promise do
         end
 
         it 'adds the next step to the new Promise' do
-          expect(value).to eq 'fulfilled nesting succeeded and so did I!'
+          expect(promise.value).to eq 'fulfilled nesting succeeded and so did I!'
         end
       end
 
@@ -130,7 +130,7 @@ describe Promise do
         end
 
         it 'adds the next step to the new Promise' do
-          expect(value).to eq 'Oops! but I did not...'
+          expect(promise.value).to eq 'Oops! but I did not...'
         end
       end
     end
@@ -154,25 +154,24 @@ describe Promise do
     before { promise; sleep 9 }
 
     it 'waits for all promises to resolve' do
-      expect(value).to eq "#{promises.size} promises resolved!"
+      expect(promise.value).to eq "#{promises.size} promises resolved!"
     end
   end
 
-  xdescribe '.any' do
+  describe '.any' do
     let(:promises) do
       [1, 2].map do |n|
         Promise.new do |resolve, reject|
-          sleep rand(3)
+          sleep rand(2)
           resolve.call(n)
         end
       end
     end
-    let(:timeout) { Promise.new { sleep 2; raise 'Took too long!'} }
-    let(:promise) { Promise.any(*promises << timeout) }
-    before { promise; sleep 6 }
 
-    it 'waits for one promise to fulfill' do
-      expect(value).to be_a String
+    let(:promise) { Promise.any(*promises) }
+
+    it 'returns one promise' do
+      expect(promise).to be_a Promise
     end
   end
 end

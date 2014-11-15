@@ -50,7 +50,7 @@ public
     on_success ||= ->(x) {x}
     on_error ||= ->(x) {x}
 
-    Promise.new(false) do |fulfill, reject|
+    Promise.new do |fulfill, reject|
       step = {
         fulfill: fulfill,
         reject: reject,
