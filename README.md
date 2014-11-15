@@ -19,7 +19,7 @@ Run `rake install`
 Then in irb, you should be able to `require 'promise'`
 
 ## Similar projects:
-- [promise.rb](https://github.com/lgierth/promise.rb/blob/master/README.md)
+- [promise.rb](https://github.com/lgierth/promise.rb/blob/master/README.md), Promises/A(+) implementation
 - [concurrent-ruby](https://github.com/jdantonio/concurrent-ruby), Promises/A(+) implementation, thread based
 - [ruby-thread](https://github.com/meh/ruby-thread), thread/mutex/condition variable based, thread safe
 - [promise](https://github.com/bhuga/promising-future), a.k.a. promising-future, classic promises and futures, thread based
