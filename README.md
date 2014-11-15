@@ -2,16 +2,7 @@
 This is not production code (at the moment). It is a conceptual demo.
 Slides for the accompanying presentation are here :  http://dinshaw.github.io/promises-sildes/#/6
 
-For our context, 'resolve' chooses between 'fulfillment' (success) and 'rejection' (failure)
-
-## Resolve:
-Settle or find a solution to (a problem, dispute, or contentious matter).
-
-Decide firmly on a course of action.
-
-## Fulfill:
-Bring to completion or reality; achieve or realize (something desired, promised, or predicted).
-
+* For this implementation, 'resolve' chooses between 'fulfillment' (success) and 'rejection' (failure)
 
 ## Installation
 Clone this repo.
