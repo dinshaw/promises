@@ -20,13 +20,6 @@ Then in irb, you should be able to `require 'promise'`
 
 ## Similar projects:
 - [promise.rb](https://github.com/lgierth/promise.rb/blob/master/README.md), Promises/A(+) implementation
-- [concurrent-ruby](https://github.com/jdantonio/concurrent-ruby), Promises/A(+) implementation, thread based
-- [ruby-thread](https://github.com/meh/ruby-thread), thread/mutex/condition variable based, thread safe
-- [promise](https://github.com/bhuga/promising-future), a.k.a. promising-future, classic promises and futures, thread based
-- [celluloid-promise](https://github.com/cotag/celluloid-promise), inspired by Q, backed by a Celluloid actor
-- [em-promise](https://github.com/cotag/em-promise), inspired by Q, backed by an EventMachine reactor
-- [futuristic](https://github.com/seanlilmateus/futuristic), MacRuby bindings for Grand Central Dispatch
-- [methodmissing/promise](https://github.com/methodmissing/promise), thread based, abandoned
 
 ## Contributing
 
