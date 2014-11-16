@@ -70,7 +70,7 @@ def race
       sleep x; fulfill.call("#{meme} slept #{x}")
     end
   }
-  Promise.any(*promises).then(->(x){p x})
+  Promise.any(promises).then(->(x){p x})
   nil
 end
 

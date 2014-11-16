@@ -15,7 +15,7 @@ class Promise
     end
   end
 
-  def self.any(*promises)
+  def self.any(promises)
     Promise.new do |fulfill, reject|
       count = promises.size
       on_error = ->(*) do
