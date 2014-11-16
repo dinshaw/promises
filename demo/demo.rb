@@ -64,7 +64,7 @@ Promise.all(promises).then(->(x) { puts "Everyone is up: \n#{x.join}"}); nil
 
 # Any / race
 def race
-  promises = %w(Cat Pug Baby).map { |meme|
+  promises = %w(Garfield Felix Grumpy).map { |meme|
     Promise.new do |fulfill, reject|
       x = rand(8)
       sleep x; fulfill.call("#{meme} slept #{x}")
