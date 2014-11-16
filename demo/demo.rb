@@ -26,11 +26,10 @@ Promise.new { |fulfill, reject|
 }
 
 # Things of note: Returns immediately
-pr = Promise.new { |fulfill, reject|
+watch Promise.new { |fulfill, reject|
   sleep 5
   fulfill.call('Garfield')
 }
-watch pr
 
 # Async - Sync
 Promise.new { |fulfill, reject|
@@ -40,7 +39,7 @@ Promise.new { |fulfill, reject|
 
 # Lets get a little more involved
 
-promises = %w(CAT PUG BABY).map do |meme|
+promises = %w(Garfield Felix Grumpy).map do |meme|
   Promise.new { |fulfill, _|
     x = rand(10)
     sleep x
@@ -57,7 +56,7 @@ promises = %w(Garfield Felix Grumpy).map do |meme|
     fulfill.call( p "#{meme} slept #{x}")
   }.then(->(y) { y + ", then woke up.\n" })
 end; nil
-Promise.all(*promises).then(->(x) { puts "Everyone is up: \n#{x.join}"}); nil
+Promise.all(promises).then(->(x) { puts "Everyone is up: \n#{x.join}"}); nil
 
 # separate...
 

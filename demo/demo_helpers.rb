@@ -1,7 +1,3 @@
-def get_cat_pic(n)
-  sleep(n)
-end
-
 def watch(x)
   while x.pending? do
     print x.inspect + "\r"

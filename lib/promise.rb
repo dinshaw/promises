@@ -1,9 +1,8 @@
 require "promise/version"
-require "demo_helpers"
 
 class Promise
 
-  def self.all(*promises)
+  def self.all(promises)
     Promise.new do |fulfill, reject|
       results = []
       success = ->(result) do
