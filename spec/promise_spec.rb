@@ -157,7 +157,7 @@ describe Promise do
     end
   end
 
-  xdescribe '.any' do
+  describe '.any' do
     let(:promises) do
       [1, 2].map do |n|
         Promise.new do |resolve, reject|
@@ -165,11 +165,13 @@ describe Promise do
         end
       end
     end
+
     let(:promise) { Promise.any(promises) }
+
     before { promise; sleep 1 }
 
-    it 'waits for one promise to fulfill' do
-      expect(value).to be_a String
+    it 'returns the value of the first Promise to resolve' do
+      expect(value).to be_a Integer
     end
   end
 end
