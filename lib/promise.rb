@@ -37,14 +37,6 @@ class Promise
 
 public
 
-  def pending?
-    @state == :pending
-  end
-
-  def value
-    @value
-  end
-
   def then(on_success, on_error = nil)
     on_success ||= ->(x) {x}
     on_error ||= ->(x) {x}
@@ -66,6 +58,17 @@ public
 
 private
 
+  def fulfill(value)
+    return unless @state == :pending
+    @state = :fulfilled
+    @value = value
+    resolve_steps
+  end
+
+  def fulfilled?
+    @state == :fulfilled
+  end
+
   def initialize(async = true)
     @state = :pending
     @value = nil
@@ -80,15 +83,8 @@ private
     async ? Thread.new(&exec) : exec.call
   end
 
-  def fulfill(value)
-    return unless @state == :pending
-    @state = :fulfilled
-    @value = value
-    resolve_steps
-  end
-
-  def fulfilled?
-    @state == :fulfilled
+  def pending?
+    @state == :pending
   end
 
   def reject(value)
@@ -121,5 +117,9 @@ private
   def resolve_steps
     @pending_steps.each { |step| resolve(step) }
     @pending_steps = nil
+  end
+
+  def value
+    @value
   end
 end
