@@ -35,7 +35,19 @@ class Promise
     Promise.new(false) { |fulfill, _| fulfill.call(value) }
   end
 
+  def self.chain(&block)
+    Promise.new do |fulfill, _|
+      fulfill.call(yield)
+    end
+  end
+
 public
+
+  def chain(&block)
+    self.then(->(value) {
+      Promise.chain { block.call(value) }
+    })
+  end
 
   def then(on_success, on_error = nil)
     on_success ||= ->(x) {x}

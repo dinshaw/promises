@@ -61,6 +61,20 @@ describe Promise do
     end
   end
 
+  describe '#chain' do
+    it 'allows simple chaining of promises' do
+      promise = \
+        Promise.
+          chain { sleep 0.1; 5 }.
+          chain { |n| sleep 0.1; n + 5 }.
+          chain { |n| sleep 0.1; n + 5 }
+
+      sleep 0.5
+      expect(promise.send(:value)).to eq 15
+      expect(promise.send(:fulfilled?)).to eq true
+    end
+  end
+
   describe '#then' do
     let(:promise) { Promise.start('fulfilled').then(on_success, on_error) }
 
